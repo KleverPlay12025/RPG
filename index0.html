@@ -187,6 +187,26 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    /* Botones de control */
+    .botones {
+      position: fixed;
+      bottom: 50px;
+      font-size: 120px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 25;
+      user-select: none;
+    }
+    #botonIzquierdo {
+      left: 200px;
+    }
+    #botonDerecho {
+      right: 200px;
+    }
   </style>
 </head>
 <body>
@@ -194,6 +214,10 @@
   <div class="instrucciones" id="instrucciones">
     ¡Muévete a la derecha usando las flechas del teclado! Hay una amenaza que se acerca amenazando este poblado...
   </div>
+  
+  <!-- Botones de control -->
+  <button id="botonIzquierdo" class="botones">⫷</button>
+  <button id="botonDerecho" class="botones">⫸</button>
   
   <!-- Elemento de audio para la música de fondo -->
   <audio id="bgAudio" src="./Sonidos/MusicaFondo.mp3" loop></audio>
@@ -222,14 +246,13 @@
   </div>
 
   <script>
-    // Forzar zoom al 100%
     // Forzar zoom al 75%
-const setZoom = () => {
-  const viewport = document.querySelector('meta[name="viewport"]');
-  viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
-}
+    const setZoom = () => {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
+    }
     setZoom();
-window.addEventListener('resize', setZoom);
+    window.addEventListener('resize', setZoom);
 
     let scrollX = 0;
     const velocidadFondo = 0.1;
@@ -321,11 +344,8 @@ window.addEventListener('resize', setZoom);
           bgAudio.play();
           audioIniciado = true;
         }
-        bgAudio.play();
-        audioIniciado = true;
       }
     
-      
       if (e.key === 'ArrowRight') {
         if (scrollX >= maxScroll) {
           scrollX = maxScroll;
@@ -420,6 +440,40 @@ window.addEventListener('resize', setZoom);
       particula.style.animationDelay = delay + 's';
       particulasContainer.appendChild(particula);
     }
+    
+    // --- Botones para simular flechas ---
+    const botonIzquierdo = document.getElementById('botonIzquierdo');
+    const botonDerecho = document.getElementById('botonDerecho');
+    let intervalLeft, intervalRight;
+    
+    const simulateArrow = (arrow) => {
+      const event = new KeyboardEvent('keydown', { key: arrow, bubbles: true });
+      document.dispatchEvent(event);
+    }
+    
+    botonIzquierdo.addEventListener('mousedown', () => {
+      intervalLeft = setInterval(() => {
+        simulateArrow('ArrowLeft');
+      }, 100);
+    });
+    botonIzquierdo.addEventListener('mouseup', () => {
+      clearInterval(intervalLeft);
+    });
+    botonIzquierdo.addEventListener('mouseleave', () => {
+      clearInterval(intervalLeft);
+    });
+    
+    botonDerecho.addEventListener('mousedown', () => {
+      intervalRight = setInterval(() => {
+        simulateArrow('ArrowRight');
+      }, 100);
+    });
+    botonDerecho.addEventListener('mouseup', () => {
+      clearInterval(intervalRight);
+    });
+    botonDerecho.addEventListener('mouseleave', () => {
+      clearInterval(intervalRight);
+    });
   </script>
 </body>
 </html>
