@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reino enemigo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      transform: scale(1);
+      transform-origin: top left;
+    }
+    .contenedor-principal {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .capa {
+      position: absolute;
+      width: 700%;
+      height: 100%;
+    }
+    /* Capa para casas */
+    .casas-container {
+      position: absolute;
+      width: 1900%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      bottom: 20px;
+    }
+    #fondo {
+      background: url('./Imagenes/fondo3.gif') repeat-x;
+      background-size: auto 180%;
+      z-index: 1;
+      width: 1900%;
+      bottom: 450px;
+    }
+    /* Capa de muralla */
+    .muralla-container {
+      position: absolute;
+      width: 1900%;
+      height: 100%;
+      z-index: 3;
+      top: 400px;
+    }
+    .muralla {
+      position: absolute;
+      height: 100%;
+      background: url('./Imagenes/Muralla2.png') repeat-x;
+      background-size: auto 100%;
+    }
+    .personaje {
+      position: absolute;
+      width: 300px;
+      height: 350px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 2;
+      top: 540px;
+      transition: transform 0.3s ease;
+    }
+    .mirar-izquierda {
+      transform: scaleX(-1);
+    }
+    /* Personajes */
+    #heroe {
+      transition-delay: 0s;
+      left: 40%;
+      background-image: url('./Imagenes/HeroeDelado.png');
+    }
+    #darina {
+      transition-delay: 0.1s;
+      left: 20%;
+      background-image: url('./Imagenes/DarinaDelado.png');
+    }
+    #geralt {
+      transition-delay: 0.2s;
+      left: 10%;
+      background-image: url('./Imagenes/GeraltDelado.png');
+    }
+    #magino {
+      transition-delay: 0.3s;
+      left: 28%;
+      background-image: url('./Imagenes/MagiñoDelado.png');
+    }
+    /* Capa de partículas */
+    .particulas-container {
+      position: absolute;
+      width: 1900%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      top: -10px;
+      left: 0;
+    }
+    .particula {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgb(0, 0, 0);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: caer linear infinite;
+    }
+    @keyframes caer {
+      0% {
+        transform: translateY(-10%);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    /* Boss en la escena */
+    .primerBoss {
+      position: absolute;
+      bottom: 450px;
+      left: 9100px;
+      width: 500px;
+      height: 500px;
+      background-image: url('./Imagenes/Boss3Delado.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 2;
+    }
+    /* Caja de diálogo */
+    .caja-texto {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      z-index: 10;
+      font-family: Arial, sans-serif;
+    }
+    .caja-texto .contenedor-imagenes {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .caja-texto img {
+      width: 300px;
+      height: auto;
+    }
+    .caja-texto .texto {
+      font-size: 30px;
+      line-height: 1.4;
+    }
+    /* Instrucciones iniciales */
+    .instrucciones {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      z-index: 15;
+      font-size: 24px;
+      font-family: Arial, sans-serif;
+    }
+    /* Pantalla de transición (fade) */
+    .pantallaTransicion {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('./Imagenes/BatallaEpica3.png') no-repeat center center;
+      background-size: cover;
+      opacity: 0;
+      z-index: 20;
+      animation: fadeIn 3s forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Instrucciones iniciales -->
+  <div class="instrucciones" id="instrucciones">
+    ¡Muévete a la derecha usando las flechas del teclado! Cansados por los constantes ataques, el grupo de heroes va a erradicar la fuente del problema, estaran preparados para tal combate?...
+  </div>
+  
+  <!-- Elemento de audio para la música de fondo -->
+  <audio id="bgAudio" src="./Sonidos/MusicaFondo3.mp3" loop></audio>
+  
+  <div class="contenedor-principal">
+    <div class="capa" id="fondo"></div>
+    <div class="casas-container" id="casasContainer"></div>
+    <div class="particulas-container" id="particulasContainer"></div>
+    
+    <div class="personaje" id="heroe"></div>
+    <div class="personaje" id="darina"></div>
+    <div class="personaje" id="geralt"></div>
+    <div class="personaje" id="magino"></div>
+    
+    <div class="muralla-container" id="murallaContainer"></div>
+    <div class="primerBoss"></div>
+    
+    <!-- Caja de diálogo -->
+    <div class="caja-texto" id="cajaTexto">
+      <div class="contenedor-imagenes">
+        <img id="imgHeroe" src="./Imagenes/PortraitHero.png" alt="Heroe">
+        <img id="imgBoss" src="./Imagenes/Boss3Portrait.png" alt="Boss">
+      </div>
+      <div class="texto" id="textoDialogo">Texto de diálogo...</div>
+    </div>
+  </div>
+
+  <script>
+    // Forzar zoom al 100%
+    const setZoom = () => {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (window.devicePixelRatio !== 1) {
+        alert('Por favor, ajusta el zoom al 100% para mejor experiencia');
+        viewport.content = 'width=device-width, initial-scale=' + (1 / window.devicePixelRatio) + ', maximum-scale=1.0, user-scalable=no';
+      }
+    }
+    setZoom();
+    window.addEventListener('resize', setZoom);
+
+    let scrollX = 0;
+    const velocidadFondo = 0.1;
+    const velocidadMuralla = 0.5;
+    const velocidadCasas = 0.35;
+    const maxScroll = 16000;
+    let enDialogo = false;
+    
+    // Variable para evitar iniciar varias veces el audio
+    let audioIniciado = false;
+    const bgAudio = document.getElementById('bgAudio');
+    
+    // Datos de la conversación
+    const dialogos = [
+    { speaker: 'heroe', texto: '¡Xal’thuun! He venido hasta las entrañas de tu reino para acabar con este asedio. No enviarás más tropas a mi gente. Tu guerra termina hoy.' },
+
+{ speaker: 'Xal’thuun', texto: '¡Ja! Qué audaz de tu parte venir solo a mi dominio. Pero no es valentía, es estupidez. Me arrodillaré sobre las cenizas de tu pueblo antes de que veas la luz del amanecer de nuevo.' },
+
+{ speaker: 'heroe', texto: 'Lo dices como si tuvieras ya la victoria en la palma de tu mano, pero lo único que veo es un tirano con un nombre que suena a almuerzo barato. ¿Qué sigue? ¿Tus generales se llaman Pan y Queso?' },
+
+{ speaker: 'Xal’thuun', texto: '¡¿Cómo te atreves a mofarte de mi nombre, mortal insignificante?! ¡Soy el terror de las sombras, el señor del abismo! ¡Mi nombre será recordado en el eco de la eternidad!' },
+
+{ speaker: 'heroe', texto: 'Sí, claro, “eco de la eternidad”. Pero dime la verdad, Sal y Atunn, ¿tus padres realmente te odiaban o solo querían que sonaras como un platillo de taberna?' },
+
+{ speaker: 'Xal’thuun', texto: '¡BASTA YO Xal’thuun! ¡Voy a arrancarte la lengua con mis propias manos y la serviré en un festín de desesperación!' },
+
+{ speaker: 'heroe', texto: 'Vaya, parece que toqué un nervio. Entonces, si no podemos negociar con palabras… acabemos esto con acero. ¡Por mi gente, por mi hogar, y porque no aguanto más ese nombre sin reírme!' }    ];
+    let indiceDialogo = 0;
+    
+    // Función para mostrar el diálogo actual
+    function mostrarDialogo() {
+      const caja = document.getElementById('cajaTexto');
+      const textoDialogo = document.getElementById('textoDialogo');
+      const imgHeroe = document.getElementById('imgHeroe');
+      const imgBoss = document.getElementById('imgBoss');
+      
+      if(dialogos[indiceDialogo].speaker === 'heroe'){
+        imgHeroe.style.opacity = 1;
+        imgBoss.style.opacity = 0.2;
+      } else {
+        imgHeroe.style.opacity = 0.2;
+        imgBoss.style.opacity = 1;
+      }
+      
+      textoDialogo.textContent = dialogos[indiceDialogo].texto;
+      caja.style.display = 'block';
+    }
+    
+    // Función para avanzar el diálogo
+    function avanzarDialogo() {
+      if (!enDialogo) return;
+      indiceDialogo++;
+      if (indiceDialogo >= dialogos.length) {
+        // Termina la conversación y lanza la transición
+        document.getElementById('cajaTexto').style.display = 'none';
+        enDialogo = false;
+        iniciarTransicion();
+      } else {
+        mostrarDialogo();
+      }
+    }
+    
+    // Función para iniciar la transición de fade y redirigir a battle1.html
+    function iniciarTransicion() {
+      const transicion = document.createElement('div');
+      transicion.className = 'pantallaTransicion';
+      document.body.appendChild(transicion);
+      setTimeout(() => {
+        window.location.href = 'battle3.html';
+      }, 3000);
+    }
+    
+    // Detectar clic o flechas para avanzar el diálogo y ocultar instrucciones
+    document.addEventListener('click', () => {
+      // Ocultar instrucciones si están visibles
+      const instrucciones = document.getElementById('instrucciones');
+      if(instrucciones) { instrucciones.style.display = 'none'; }
+      
+      // Iniciar audio si no lo está
+      if(!audioIniciado) {
+        bgAudio.play();
+        audioIniciado = true;
+      }
+      
+      if(enDialogo) avanzarDialogo();
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      const paso = 50;
+      
+      // Iniciar audio y ocultar instrucciones en el primer movimiento
+      if(e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const instrucciones = document.getElementById('instrucciones');
+        if(instrucciones) { instrucciones.style.display = 'none'; }
+        if(!audioIniciado) {
+          bgAudio.play();
+          audioIniciado = true;
+        }
+        bgAudio.play();
+        audioIniciado = true;
+      }
+    
+      
+      if (e.key === 'ArrowRight') {
+        if (scrollX >= maxScroll) {
+          scrollX = maxScroll;
+          if(!enDialogo) {
+            enDialogo = true;
+            indiceDialogo = 0;
+            mostrarDialogo();
+          }
+          return;
+        }
+        if (scrollX + paso > maxScroll) {
+          scrollX = maxScroll;
+          if(!enDialogo) {
+            enDialogo = true;
+            indiceDialogo = 0;
+            mostrarDialogo();
+          }
+        } else {
+          scrollX += paso;
+        }
+      } else if (e.key === 'ArrowLeft' && scrollX > 0) {
+        scrollX -= paso;
+      }
+      document.getElementById('fondo').style.transform = `translateX(${-scrollX * velocidadFondo}px)`;
+      document.querySelector('.casas-container').style.transform = `translateX(${-scrollX * velocidadCasas}px)`;
+      document.querySelector('.particulas-container').style.transform = `translateX(${-scrollX * velocidadCasas}px)`;
+      document.getElementById('murallaContainer').style.transform = `translateX(${-scrollX * velocidadMuralla}px)`;
+      document.querySelector('.primerBoss').style.transform = `translateX(${-scrollX * velocidadMuralla}px)`;
+      
+      const personajes = document.querySelectorAll('.personaje');
+      if (e.key === 'ArrowLeft') {
+        personajes.forEach(personaje => {
+          personaje.classList.add('mirar-izquierda');
+        });
+      } else if (e.key === 'ArrowRight') {
+        personajes.forEach(personaje => {
+          personaje.classList.remove('mirar-izquierda');
+        });
+      }
+    });
+    
+    // --- Generación de casas ---
+    const espaciado = 900;
+    const imagenesCasas = [
+      './Imagenes/arbolE1.png',
+      './Imagenes/arbolE2.png',
+      './Imagenes/arbolE3.png'
+    ];
+    const casasContainer = document.getElementById('casasContainer');
+    const numCasas = Math.floor(maxScroll / espaciado) + 10;
+    function aleatorio(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    for (let i = 0; i < numCasas; i++) {
+      const casa = document.createElement('div');
+      casa.style.position = 'absolute';
+      const imagen = imagenesCasas[aleatorio(0, imagenesCasas.length - 1)];
+      casa.style.backgroundImage = `url('${imagen}')`;
+      casa.style.backgroundSize = 'contain';
+      casa.style.backgroundRepeat = 'no-repeat';
+      casa.style.width = '600px';
+      casa.style.height = '600px';
+      const posX = i * espaciado + aleatorio(-espaciado/4, espaciado/4);
+      casa.style.left = posX + 'px';
+      casa.style.bottom = '350px';
+      casasContainer.appendChild(casa);
+    }
+    
+    // --- Generación dinámica de muralla ---
+    const murallaContainer = document.getElementById('murallaContainer');
+    const murallaSegmentWidth = 2600;
+    const numMurallas = Math.floor(maxScroll / murallaSegmentWidth) + 10;
+    for (let i = 0; i < numMurallas; i++) {
+      const muralla = document.createElement('div');
+      muralla.className = 'muralla';
+      muralla.style.width = murallaSegmentWidth + "px";
+      muralla.style.left = (i * murallaSegmentWidth) + "px";
+      murallaContainer.appendChild(muralla);
+    }
+    
+    // --- Generación de partículas ---
+    const numParticulas = 550;
+    const particulasContainer = document.getElementById('particulasContainer');
+    const containerWidth = particulasContainer.offsetWidth;
+    for (let i = 0; i < numParticulas; i++) {
+      const particula = document.createElement('div');
+      particula.className = 'particula';
+      particula.style.left = Math.random() * containerWidth + 'px';
+      const duracion = Math.random() * 5 + 3;
+      particula.style.animationDuration = duracion + 's';
+      const delay = Math.random() * 5;
+      particula.style.animationDelay = delay + 's';
+      particulasContainer.appendChild(particula);
+    }
+  </script>
+</body>
+</html>
