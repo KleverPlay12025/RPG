@@ -223,13 +223,11 @@
 
   <script>
     // Forzar zoom al 100%
-    const setZoom = () => {
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (window.devicePixelRatio !== 1) {
-        alert('Por favor, ajusta el zoom al 100% para mejor experiencia');
-        viewport.content = 'width=device-width, initial-scale=' + (1 / window.devicePixelRatio) + ', maximum-scale=1.0, user-scalable=no';
-      }
-    }
+    // Forzar zoom al 75%
+const setZoom = () => {
+  const viewport = document.querySelector('meta[name="viewport"]');
+  viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
+}
     setZoom();
     window.addEventListener('resize', setZoom);
 
