@@ -187,13 +187,37 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    /* Botones de control */
+    .botones {
+      position: fixed;
+      bottom: 50px;
+      font-size: 120px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 25;
+      user-select: none;
+    }
+    #botonIzquierdo {
+      left: 200px;
+    }
+    #botonDerecho {
+      right: 200px;
+    }
   </style>
 </head>
 <body>
   <!-- Instrucciones iniciales -->
   <div class="instrucciones" id="instrucciones">
-    ¡Muévete a la derecha usando las flechas del teclado! Ahora que ha caido la noche un guerrero más poderoso se aproxima al jardin del reino...
+    ¡Muévete a la derecha usando las flechas del teclado! Ahora que ha caído la noche un guerrero más poderoso se aproxima al jardín del reino...
   </div>
+  
+  <!-- Botones de control -->
+  <button id="botonIzquierdo" class="botones">⫷</button>
+  <button id="botonDerecho" class="botones">⫸</button>
   
   <!-- Elemento de audio para la música de fondo -->
   <audio id="bgAudio" src="./Sonidos/MusicaFondo2.mp3" loop></audio>
@@ -222,8 +246,7 @@
   </div>
 
   <script>
-    // Forzar zoom al 100%
-    // Forzar zoom al 75%
+        // Forzar zoom al 75%
 const setZoom = () => {
   const viewport = document.querySelector('meta[name="viewport"]');
   viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
@@ -244,11 +267,11 @@ const setZoom = () => {
     
     // Datos de la conversación
     const dialogos = [
-    { speaker: 'heroe', texto: 'No tienes que hacer esto. Mortexus eligió su destino, y tú aún puedes elegir el tuyo. ¡La violencia solo traerá más dolor! (presiona click para continuar)' },
-{ speaker: 'boss', texto: '¡Cierra la boca! ¡Mortexus era mi hermano de guerra! ¡Y tú lo arrancaste de este mundo! ¡No habrá paz, solo venganza!' },
-{ speaker: 'heroe', texto: 'Fue una batalla que él comenzó... y que yo no deseaba. Pero si vienes con odio, solo hallarás mi determinación. ¡No permitiré que el ciclo de odio continúe!' },
-{ speaker: 'boss', texto: '¡Tus palabras son veneno para mis oídos! ¡Te voy a romper, hueso por hueso, y le haré saber a tu pueblo lo que se siente perderlo todo!' },
-{ speaker: 'heroe', texto: 'Entonces no queda más que luchar. No por odio, sino por proteger lo que él quiso destruir. Afuera, lejos de los inocentes... ¡te enfrentaré con todo lo que soy!' }
+      { speaker: 'heroe', texto: 'No tienes que hacer esto. Mortexus eligió su destino, y tú aún puedes elegir el tuyo. ¡La violencia solo traerá más dolor! (presiona click para continuar)' },
+      { speaker: 'boss', texto: '¡Cierra la boca! ¡Mortexus era mi hermano de guerra! ¡Y tú lo arrancaste de este mundo! ¡No habrá paz, solo venganza!' },
+      { speaker: 'heroe', texto: 'Fue una batalla que él comenzó... y que yo no deseaba. Pero si vienes con odio, solo hallarás mi determinación. ¡No permitiré que el ciclo de odio continúe!' },
+      { speaker: 'boss', texto: '¡Tus palabras son veneno para mis oídos! ¡Te voy a romper, hueso por hueso, y le haré saber a tu pueblo lo que se siente perderlo todo!' },
+      { speaker: 'heroe', texto: 'Entonces no queda más que luchar. No por odio, sino por proteger lo que él quiso destruir. Afuera, lejos de los inocentes... ¡te enfrentaré con todo lo que soy!' }
     ];
     let indiceDialogo = 0;
     
@@ -259,7 +282,7 @@ const setZoom = () => {
       const imgHeroe = document.getElementById('imgHeroe');
       const imgBoss = document.getElementById('imgBoss');
       
-      if(dialogos[indiceDialogo].speaker === 'heroe'){
+      if (dialogos[indiceDialogo].speaker === 'heroe') {
         imgHeroe.style.opacity = 1;
         imgBoss.style.opacity = 0.2;
       } else {
@@ -285,7 +308,7 @@ const setZoom = () => {
       }
     }
     
-    // Función para iniciar la transición de fade y redirigir a battle1.html
+    // Función para iniciar la transición de fade y redirigir a battle2.html
     function iniciarTransicion() {
       const transicion = document.createElement('div');
       transicion.className = 'pantallaTransicion';
@@ -297,39 +320,32 @@ const setZoom = () => {
     
     // Detectar clic o flechas para avanzar el diálogo y ocultar instrucciones
     document.addEventListener('click', () => {
-      // Ocultar instrucciones si están visibles
       const instrucciones = document.getElementById('instrucciones');
-      if(instrucciones) { instrucciones.style.display = 'none'; }
+      if (instrucciones) instrucciones.style.display = 'none';
       
-      // Iniciar audio si no lo está
-      if(!audioIniciado) {
+      if (!audioIniciado) {
         bgAudio.play();
         audioIniciado = true;
       }
       
-      if(enDialogo) avanzarDialogo();
+      if (enDialogo) avanzarDialogo();
     });
     
     document.addEventListener('keydown', (e) => {
       const paso = 50;
-      
-      // Iniciar audio y ocultar instrucciones en el primer movimiento
-      if(e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         const instrucciones = document.getElementById('instrucciones');
-        if(instrucciones) { instrucciones.style.display = 'none'; }
-        if(!audioIniciado) {
+        if (instrucciones) instrucciones.style.display = 'none';
+        if (!audioIniciado) {
           bgAudio.play();
           audioIniciado = true;
         }
-        bgAudio.play();
-        audioIniciado = true;
       }
     
-      
       if (e.key === 'ArrowRight') {
         if (scrollX >= maxScroll) {
           scrollX = maxScroll;
-          if(!enDialogo) {
+          if (!enDialogo) {
             enDialogo = true;
             indiceDialogo = 0;
             mostrarDialogo();
@@ -338,7 +354,7 @@ const setZoom = () => {
         }
         if (scrollX + paso > maxScroll) {
           scrollX = maxScroll;
-          if(!enDialogo) {
+          if (!enDialogo) {
             enDialogo = true;
             indiceDialogo = 0;
             mostrarDialogo();
@@ -388,7 +404,7 @@ const setZoom = () => {
       casa.style.backgroundRepeat = 'no-repeat';
       casa.style.width = '600px';
       casa.style.height = '600px';
-      const posX = i * espaciado + aleatorio(-espaciado/4, espaciado/4);
+      const posX = i * espaciado + aleatorio(-espaciado / 4, espaciado / 4);
       casa.style.left = posX + 'px';
       casa.style.bottom = '350px';
       casasContainer.appendChild(casa);
@@ -420,6 +436,28 @@ const setZoom = () => {
       particula.style.animationDelay = delay + 's';
       particulasContainer.appendChild(particula);
     }
+    
+    // --- Botones para simular flechas del teclado ---
+    const botonIzquierdo = document.getElementById('botonIzquierdo');
+    const botonDerecho = document.getElementById('botonDerecho');
+    let intervalLeft, intervalRight;
+    
+    const simulateArrow = (arrow) => {
+      const event = new KeyboardEvent('keydown', { key: arrow, bubbles: true });
+      document.dispatchEvent(event);
+    }
+    
+    botonIzquierdo.addEventListener('mousedown', () => {
+      intervalLeft = setInterval(() => simulateArrow('ArrowLeft'), 100);
+    });
+    botonIzquierdo.addEventListener('mouseup', () => clearInterval(intervalLeft));
+    botonIzquierdo.addEventListener('mouseleave', () => clearInterval(intervalLeft));
+    
+    botonDerecho.addEventListener('mousedown', () => {
+      intervalRight = setInterval(() => simulateArrow('ArrowRight'), 100);
+    });
+    botonDerecho.addEventListener('mouseup', () => clearInterval(intervalRight));
+    botonDerecho.addEventListener('mouseleave', () => clearInterval(intervalRight));
   </script>
 </body>
 </html>
