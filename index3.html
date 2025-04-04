@@ -187,13 +187,37 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    /* Botones de control */
+    .botones {
+      position: fixed;
+      bottom: 50px;
+      font-size: 120px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 25;
+      user-select: none;
+    }
+    #botonIzquierdo {
+      left: 200px;
+    }
+    #botonDerecho {
+      right: 200px;
+    }
   </style>
 </head>
 <body>
   <!-- Instrucciones iniciales -->
   <div class="instrucciones" id="instrucciones">
-    ¡Muévete a la derecha usando las flechas del teclado! Cansados por los constantes ataques, el grupo de heroes va a erradicar la fuente del problema, estaran preparados para tal combate?...
+    ¡Muévete a la derecha usando las flechas del teclado! Cansados por los constantes ataques, el grupo de héroes va a erradicar la fuente del problema, ¿estarán preparados para tal combate?
   </div>
+  
+  <!-- Botones de control -->
+  <button id="botonIzquierdo" class="botones">⫷</button>
+  <button id="botonDerecho" class="botones">⫸</button>
   
   <!-- Elemento de audio para la música de fondo -->
   <audio id="bgAudio" src="./Sonidos/MusicaFondo3.mp3" loop></audio>
@@ -214,7 +238,7 @@
     <!-- Caja de diálogo -->
     <div class="caja-texto" id="cajaTexto">
       <div class="contenedor-imagenes">
-        <img id="imgHeroe" src="./Imagenes/PortraitHero.png" alt="Heroe">
+        <img id="imgHeroe" src="./Imagenes/PortraitHero.png" alt="Héroe">
         <img id="imgBoss" src="./Imagenes/Boss3Portrait.png" alt="Boss">
       </div>
       <div class="texto" id="textoDialogo">Texto de diálogo...</div>
@@ -222,12 +246,11 @@
   </div>
 
   <script>
-    // Forzar zoom al 100%
-   // Forzar zoom al 75%
-const setZoom = () => {
-  const viewport = document.querySelector('meta[name="viewport"]');
-  viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
-}
+    // Forzar zoom al 75%
+    const setZoom = () => {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      viewport.content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=no';
+    }
     setZoom();
     window.addEventListener('resize', setZoom);
 
@@ -244,19 +267,14 @@ const setZoom = () => {
     
     // Datos de la conversación
     const dialogos = [
-    { speaker: 'heroe', texto: '¡Xal’thuun! He venido hasta las entrañas de tu reino para acabar con este asedio. No enviarás más tropas a mi gente. Tu guerra termina hoy.' },
-
-{ speaker: 'Xal’thuun', texto: '¡Ja! Qué audaz de tu parte venir solo a mi dominio. Pero no es valentía, es estupidez. Me arrodillaré sobre las cenizas de tu pueblo antes de que veas la luz del amanecer de nuevo.' },
-
-{ speaker: 'heroe', texto: 'Lo dices como si tuvieras ya la victoria en la palma de tu mano, pero lo único que veo es un tirano con un nombre que suena a almuerzo barato. ¿Qué sigue? ¿Tus generales se llaman Pan y Queso?' },
-
-{ speaker: 'Xal’thuun', texto: '¡¿Cómo te atreves a mofarte de mi nombre, mortal insignificante?! ¡Soy el terror de las sombras, el señor del abismo! ¡Mi nombre será recordado en el eco de la eternidad!' },
-
-{ speaker: 'heroe', texto: 'Sí, claro, “eco de la eternidad”. Pero dime la verdad, Sal y Atunn, ¿tus padres realmente te odiaban o solo querían que sonaras como un platillo de taberna?' },
-
-{ speaker: 'Xal’thuun', texto: '¡BASTA YO Xal’thuun! ¡Voy a arrancarte la lengua con mis propias manos y la serviré en un festín de desesperación!' },
-
-{ speaker: 'heroe', texto: 'Vaya, parece que toqué un nervio. Entonces, si no podemos negociar con palabras… acabemos esto con acero. ¡Por mi gente, por mi hogar, y porque no aguanto más ese nombre sin reírme!' }    ];
+      { speaker: 'heroe', texto: '¡Xal’thuun! He venido hasta las entrañas de tu reino para acabar con este asedio. No enviarás más tropas a mi gente. Tu guerra termina hoy.' },
+      { speaker: 'Xal’thuun', texto: '¡Ja! Qué audaz de tu parte venir solo a mi dominio. Pero no es valentía, es estupidez. Me arrodillaré sobre las cenizas de tu pueblo antes de que veas la luz del amanecer de nuevo.' },
+      { speaker: 'heroe', texto: 'Lo dices como si tuvieras ya la victoria en la palma de tu mano, pero lo único que veo es un tirano con un nombre que suena a almuerzo barato. ¿Qué sigue? ¿Tus generales se llaman Pan y Queso?' },
+      { speaker: 'Xal’thuun', texto: '¡¿Cómo te atreves a mofarte de mi nombre, mortal insignificante?! ¡Soy el terror de las sombras, el señor del abismo! ¡Mi nombre será recordado en el eco de la eternidad!' },
+      { speaker: 'heroe', texto: 'Sí, claro, “eco de la eternidad”. Pero dime la verdad, Sal y Atunn, ¿tus padres realmente te odiaban o solo querían que sonaras como un platillo de taberna?' },
+      { speaker: 'Xal’thuun', texto: '¡BASTA YO Xal’thuun! ¡Voy a arrancarte la lengua con mis propias manos y la serviré en un festín de desesperación!' },
+      { speaker: 'heroe', texto: 'Vaya, parece que toqué un nervio. Entonces, si no podemos negociar con palabras… acabemos esto con acero. ¡Por mi gente, por mi hogar, y porque no aguanto más ese nombre sin reírme!' }
+    ];
     let indiceDialogo = 0;
     
     // Función para mostrar el diálogo actual
@@ -266,7 +284,7 @@ const setZoom = () => {
       const imgHeroe = document.getElementById('imgHeroe');
       const imgBoss = document.getElementById('imgBoss');
       
-      if(dialogos[indiceDialogo].speaker === 'heroe'){
+      if (dialogos[indiceDialogo].speaker === 'heroe') {
         imgHeroe.style.opacity = 1;
         imgBoss.style.opacity = 0.2;
       } else {
@@ -292,7 +310,7 @@ const setZoom = () => {
       }
     }
     
-    // Función para iniciar la transición de fade y redirigir a battle1.html
+    // Función para iniciar la transición de fade y redirigir a battle3.html
     function iniciarTransicion() {
       const transicion = document.createElement('div');
       transicion.className = 'pantallaTransicion';
@@ -304,39 +322,34 @@ const setZoom = () => {
     
     // Detectar clic o flechas para avanzar el diálogo y ocultar instrucciones
     document.addEventListener('click', () => {
-      // Ocultar instrucciones si están visibles
       const instrucciones = document.getElementById('instrucciones');
-      if(instrucciones) { instrucciones.style.display = 'none'; }
+      if (instrucciones) instrucciones.style.display = 'none';
       
-      // Iniciar audio si no lo está
-      if(!audioIniciado) {
+      if (!audioIniciado) {
         bgAudio.play();
         audioIniciado = true;
       }
       
-      if(enDialogo) avanzarDialogo();
+      if (enDialogo) avanzarDialogo();
     });
     
     document.addEventListener('keydown', (e) => {
       const paso = 50;
-      
-      // Iniciar audio y ocultar instrucciones en el primer movimiento
-      if(e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         const instrucciones = document.getElementById('instrucciones');
-        if(instrucciones) { instrucciones.style.display = 'none'; }
-        if(!audioIniciado) {
+        if (instrucciones) instrucciones.style.display = 'none';
+        if (!audioIniciado) {
           bgAudio.play();
           audioIniciado = true;
         }
         bgAudio.play();
         audioIniciado = true;
       }
-    
       
       if (e.key === 'ArrowRight') {
         if (scrollX >= maxScroll) {
           scrollX = maxScroll;
-          if(!enDialogo) {
+          if (!enDialogo) {
             enDialogo = true;
             indiceDialogo = 0;
             mostrarDialogo();
@@ -345,7 +358,7 @@ const setZoom = () => {
         }
         if (scrollX + paso > maxScroll) {
           scrollX = maxScroll;
-          if(!enDialogo) {
+          if (!enDialogo) {
             enDialogo = true;
             indiceDialogo = 0;
             mostrarDialogo();
@@ -395,7 +408,7 @@ const setZoom = () => {
       casa.style.backgroundRepeat = 'no-repeat';
       casa.style.width = '600px';
       casa.style.height = '600px';
-      const posX = i * espaciado + aleatorio(-espaciado/4, espaciado/4);
+      const posX = i * espaciado + aleatorio(-espaciado / 4, espaciado / 4);
       casa.style.left = posX + 'px';
       casa.style.bottom = '350px';
       casasContainer.appendChild(casa);
@@ -427,6 +440,40 @@ const setZoom = () => {
       particula.style.animationDelay = delay + 's';
       particulasContainer.appendChild(particula);
     }
+    
+    // --- Botones para simular flechas del teclado ---
+    const botonIzquierdo = document.createElement('button');
+    botonIzquierdo.id = 'botonIzquierdo';
+    botonIzquierdo.className = 'botones';
+    botonIzquierdo.textContent = '⫷';
+    
+    const botonDerecho = document.createElement('button');
+    botonDerecho.id = 'botonDerecho';
+    botonDerecho.className = 'botones';
+    botonDerecho.textContent = '⫸';
+    
+    // Insertar los botones en el body
+    document.body.appendChild(botonIzquierdo);
+    document.body.appendChild(botonDerecho);
+    
+    let intervalLeft, intervalRight;
+    
+    const simulateArrow = (arrow) => {
+      const event = new KeyboardEvent('keydown', { key: arrow, bubbles: true });
+      document.dispatchEvent(event);
+    }
+    
+    botonIzquierdo.addEventListener('mousedown', () => {
+      intervalLeft = setInterval(() => simulateArrow('ArrowLeft'), 100);
+    });
+    botonIzquierdo.addEventListener('mouseup', () => clearInterval(intervalLeft));
+    botonIzquierdo.addEventListener('mouseleave', () => clearInterval(intervalLeft));
+    
+    botonDerecho.addEventListener('mousedown', () => {
+      intervalRight = setInterval(() => simulateArrow('ArrowRight'), 100);
+    });
+    botonDerecho.addEventListener('mouseup', () => clearInterval(intervalRight));
+    botonDerecho.addEventListener('mouseleave', () => clearInterval(intervalRight));
   </script>
 </body>
 </html>
